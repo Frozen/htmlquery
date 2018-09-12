@@ -1,25 +1,21 @@
-#[macro_use]
-extern crate html5ever;
-//extern crate string_cache;
 extern crate hierarchy;
+extern crate html5ever;
 extern crate linked_hash_set;
+
+#[cfg(test)]
 #[macro_use]
 extern crate maplit;
 extern crate tendril;
 
 pub mod parse;
-pub mod query;
+mod dom;
 mod index;
 mod node;
 mod walker;
-mod dom;
-
-use dom::DOM;
-use query::Query;
+mod search;
+use dom::Dom;
 use parse::parse;
 
-pub fn parse_html(s: &str) -> Query {
+pub fn parse_html(s: &str) -> Dom {
     parse(s)
-    //    let dom = parse(s);
-    //    Query::new(dom)
 }

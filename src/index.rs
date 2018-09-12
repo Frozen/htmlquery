@@ -1,11 +1,11 @@
 use std::collections::HashMap;
-use tendril::{SliceExt, StrTendril, Tendril};
+use tendril::StrTendril;
 use hierarchy::Token as NodeIndex;
 use node::Node;
 use linked_hash_set::LinkedHashSet as HashSet;
 
 pub fn get_classes_from_attr_value(s: &str) -> Vec<&str> {
-    return s.split_whitespace().filter(|x| x.len() > 0).collect();
+    s.split_whitespace().filter(|x| !x.is_empty()).collect()
 }
 
 #[derive(Debug, Default)]
@@ -22,12 +22,6 @@ pub(crate) struct Index {
     // returns default value if no match
     #[doc(hidden)]
     _default: HashSet<NodeIndex>,
-
-    #[doc(hidden)]
-    _id: StrTendril,
-
-    #[doc(hidden)]
-    _class: StrTendril,
 }
 
 impl Index {
@@ -37,8 +31,6 @@ impl Index {
             tag_names: HashMap::new(),
             classnames: HashMap::new(),
 
-            _id: From::from("id"),
-            _class: From::from("class"),
             _default: HashSet::new(),
         }
     }
@@ -58,18 +50,18 @@ impl Index {
         attrs: &HashMap<StrTendril, StrTendril>,
         node_index: NodeIndex,
     ) {
-        for i in attrs.get(&self._id) {
+        if let Some(id) = attrs.get("id".as_bytes()) {
             self.ids
-                .entry(i.clone())
+                .entry(id.clone())
                 .or_insert_with(HashSet::new)
                 .insert(node_index);
         }
 
         // if contains "class" in attributes
-        for i in attrs.get(&self._class) {
-            for class in get_classes_from_attr_value(&*i) {
+        if let Some(classes) = attrs.get("class".as_bytes()) {
+            for class in get_classes_from_attr_value(&*classes) {
                 self.classnames
-                    .entry(i.clone())
+                    .entry(class.into())
                     .or_insert_with(HashSet::new)
                     .insert(node_index);
             }
@@ -101,7 +93,7 @@ mod tests {
     use super::get_classes_from_attr_value;
     use node::Node;
     use std::collections::HashMap;
-    use tendril::{SliceExt, StrTendril, Tendril};
+    use tendril::StrTendril;
     use super::Index;
     use linked_hash_set::LinkedHashSet as HashSet;
     use std::iter::FromIterator;
@@ -126,16 +118,15 @@ mod tests {
 
     #[test]
     fn test_index_search() {
-        let a = Node::tag(From::from("a"), create_attr("link", "ya.ru"));
-        let body = Node::tag(From::from("body"), create_attr("class", "main"));
-        let div = Node::tag(From::from("div"), create_attr("class", "main"));
+        let a = Node::tag("a", create_attr("link", "ya.ru"));
+        let body = Node::tag("body", create_attr("class", "main"));
+        let div = Node::tag("div", create_attr("class", "main"));
 
         let mut indexer = Index::new();
         indexer.index_node(&a, 1);
         indexer.index_node(&body, 2);
         indexer.index_node(&div, 3);
 
-        // TODO
         assert_eq!(
             &HashSet::from_iter(vec![2, 3]),
             indexer.search_by_class(&"main".into())
