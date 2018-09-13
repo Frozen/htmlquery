@@ -63,13 +63,6 @@ impl Node {
             _ => None,
         }
     }
-
-    //    pub fn get_id(&self) -> Option<&StrTendril> {
-    //        match self {
-    //            Mode::Tag { id, .. } => Some(id),
-    //            _ => None,
-    //        }
-    //    }
 }
 
 #[cfg(test)]

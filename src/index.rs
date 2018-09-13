@@ -4,10 +4,6 @@ use hierarchy::Token as NodeIndex;
 use node::Node;
 use linked_hash_set::LinkedHashSet as HashSet;
 
-pub fn get_classes_from_attr_value(s: &str) -> Vec<&str> {
-    s.split_whitespace().filter(|x| !x.is_empty()).collect()
-}
-
 #[derive(Debug, Default)]
 pub(crate) struct Index {
     /// index by node id
@@ -36,35 +32,25 @@ impl Index {
     }
 
     pub fn index_node(&mut self, node: &Node, node_index: NodeIndex) {
-        if let Some(attrs) = node.get_attrs() {
-            self.add_to_index_by_attributes(attrs, node_index);
-        }
-
+        self.add_to_index_by_attributes(node, node_index);
         if let Some(name) = node.get_name() {
             self.add_to_index_by_tag_name(name, node_index);
         }
     }
 
-    fn add_to_index_by_attributes(
-        &mut self,
-        attrs: &HashMap<StrTendril, StrTendril>,
-        node_index: NodeIndex,
-    ) {
-        if let Some(id) = attrs.get("id".as_bytes()) {
+    fn add_to_index_by_attributes(&mut self, node: &Node, node_index: NodeIndex) {
+        if let Some(id) = node.get_id() {
             self.ids
                 .entry(id.clone())
                 .or_insert_with(HashSet::new)
                 .insert(node_index);
         }
 
-        // if contains "class" in attributes
-        if let Some(classes) = attrs.get("class".as_bytes()) {
-            for class in get_classes_from_attr_value(&*classes) {
-                self.classnames
-                    .entry(class.into())
-                    .or_insert_with(HashSet::new)
-                    .insert(node_index);
-            }
+        for class in node.get_classes() {
+            self.classnames
+                .entry(class)
+                .or_insert_with(HashSet::new)
+                .insert(node_index);
         }
     }
 
@@ -90,21 +76,12 @@ impl Index {
 
 #[cfg(test)]
 mod tests {
-    use super::get_classes_from_attr_value;
     use node::Node;
     use std::collections::HashMap;
     use tendril::StrTendril;
     use super::Index;
     use linked_hash_set::LinkedHashSet as HashSet;
     use std::iter::FromIterator;
-
-    #[test]
-    fn test_parse() {
-        assert_eq!(
-            vec!["a", "b", "c"],
-            get_classes_from_attr_value("a b     c")
-        );
-    }
 
     fn create_attr<T, E>(t: T, e: E) -> HashMap<StrTendril, StrTendril>
     where

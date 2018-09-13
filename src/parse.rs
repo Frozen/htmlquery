@@ -5,7 +5,6 @@ use html5ever::tendril::TendrilSink;
 use std::io::Cursor;
 use hierarchy::Hierarchy;
 use super::walker::Walker;
-//use dom::DOM;
 use index::Index;
 use dom::Dom;
 

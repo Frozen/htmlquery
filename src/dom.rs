@@ -93,24 +93,7 @@ fn node_passes_conditions(node: &Node, v: &[Token]) -> bool {
     for i in v {
         let rs = match i {
             Token::Id(ref id) => node.get_attrs().and_then(|e| e.get("id".as_bytes())) == Some(id),
-            Token::Class(ref class) => {
-                node.has_class(class)
-                //                if node.get_attrs().is_none() {
-                //                    return false;
-                //                }
-                //                let attrs = node.get_attrs().unwrap();
-                //                if attrs
-                //                    .get("class".as_bytes())
-                //                    .and_then(|e| {
-                //                        e.split_whitespace()
-                //                            .find(|v| v.to_string() == class.to_string())
-                //                    })
-                //                    .is_none()
-                //                {
-                //                    return false;
-                //                }
-                //                true
-            }
+            Token::Class(ref class) => node.has_class(class),
             Token::Tag(ref tag) => node.get_name() == Some(tag),
         };
         if !rs {
