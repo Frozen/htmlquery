@@ -12,7 +12,6 @@ mod dom;
 mod index;
 mod node;
 mod walker;
-mod search;
 use dom::Dom;
 use parse::parse;
 
