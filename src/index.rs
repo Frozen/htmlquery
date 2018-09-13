@@ -95,7 +95,7 @@ mod tests {
 
     #[test]
     fn test_index_search() {
-        let a = Node::tag("a", create_attr("link", "ya.ru"));
+        let a = Node::tag("a", create_attr("href", "ya.ru"));
         let body = Node::tag("body", create_attr("class", "main"));
         let div = Node::tag("div", create_attr("class", "main"));
 

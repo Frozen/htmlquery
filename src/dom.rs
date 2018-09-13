@@ -9,7 +9,6 @@ pub struct Dom {
     index: Index,
 }
 
-//
 impl Dom {
     pub(crate) fn new(h: Hierarchy<Node>, index: Index) -> Dom {
         Dom { h, index }
@@ -24,8 +23,6 @@ impl Dom {
                 Token::Tag(ref s) => self.index.search_by_tag(&s),
             }
         };
-
-        //        println!("get_tags_by_conditions initial {:?}", initial);
 
         let mut out = vec![];
         for tag_id in initial {
@@ -110,12 +107,12 @@ enum Token {
     Id(StrTendril),
 }
 
-impl From<String> for Token {
-    fn from(s: String) -> Self {
+impl<'a> From<&'a String> for Token {
+    fn from(s: &'a String) -> Self {
         match s.chars().nth(0).unwrap() {
             '.' => Token::Class(s[1..].into()),
             '#' => Token::Id(s[1..].into()),
-            _ => Token::Tag(s.into()),
+            _ => Token::Tag(s[..].into()),
         }
     }
 }
@@ -149,7 +146,7 @@ fn parse_token(s: &str) -> Tokens {
             acc
         })
         .iter()
-        .map(|e: &String| -> Token { e.to_string().into() })
+        .map(|e| e.into())
         .collect::<Tokens>()
 }
 
