@@ -7,7 +7,7 @@ Add the following lines to your `Cargo.toml` file:
 
 ```toml
 [dependencies]
-htmlquery = {git="https://github.com/Frozen/htmlquery.git", tag = "0.1"}
+htmlquery = {git="https://github.com/Frozen/htmlquery.git", tag = "0.1.1"}
 ```
 
 ### Examples

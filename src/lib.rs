@@ -15,6 +15,8 @@ mod walker;
 use dom::Dom;
 use parse::parse;
 
+pub use tendril::StrTendril;
+
 pub fn parse_html(s: &str) -> Dom {
     parse(s)
 }

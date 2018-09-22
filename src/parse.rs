@@ -18,7 +18,7 @@ pub fn parse(s: &str) -> Dom {
     let mut walker = Walker::new(Hierarchy::new(), indexer);
 
     walker.walk(dom.document, None);
-    walker.into_query()
+    walker.into_dom()
 }
 
 #[cfg(test)]

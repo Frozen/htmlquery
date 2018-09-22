@@ -56,7 +56,7 @@ impl Walker {
         }
     }
 
-    pub(crate) fn into_query(self) -> Dom {
+    pub(crate) fn into_dom(self) -> Dom {
         Dom::new(self.store, self.indexer)
     }
 }
